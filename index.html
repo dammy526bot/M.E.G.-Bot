@@ -1,0 +1,156 @@
+
+<!DOCTYPE html>
+<html lang="zh-TW">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+  <title>Discord 應徵表單 | M.E.G</title>
+  <link href="https://fonts.googleapis.com/css2?family=Orbitron&display=swap" rel="stylesheet">
+  <style>
+    body {
+      background-color: #0f172a;
+      color: #f8fafc;
+      font-family: 'Orbitron', sans-serif;
+      padding: 2rem;
+    }
+
+    .container {
+      max-width: 600px;
+      margin: auto;
+      background: #1e293b;
+      border-radius: 16px;
+      padding: 2rem;
+      box-shadow: 0 0 20px rgba(0,0,0,0.5);
+    }
+
+    h2 {
+      text-align: center;
+      color: #38bdf8;
+    }
+
+    label {
+      display: block;
+      margin-top: 1rem;
+      color: #94a3b8;
+    }
+
+    input, textarea, select {
+      width: 100%;
+      padding: 0.75rem;
+      border-radius: 8px;
+      border: none;
+      margin-top: 0.5rem;
+      background: #334155;
+      color: white;
+      font-size: 1rem;
+    }
+
+    button {
+      margin-top: 1.5rem;
+      background-color: #22c55e;
+      color: white;
+      padding: 1rem;
+      border: none;
+      width: 100%;
+      font-size: 1rem;
+      border-radius: 12px;
+      cursor: pointer;
+    }
+
+    button:hover {
+      background-color: #16a34a;
+    }
+
+    .success {
+      margin-top: 1rem;
+      color: #4ade80;
+      text-align: center;
+    }
+
+    .error {
+      margin-top: 1rem;
+      color: #f87171;
+      text-align: center;
+    }
+  </style>
+</head>
+<body>
+  <div class="container">
+    <h2><img src="https://i.postimg.cc/VL8LPQ7B/M-E-G.png" alt="M.E.G Logo" style="height:40px; vertical-align:middle;"> Discord 入隊申請表</h2>
+    <form id="applyForm">
+      <label>你的 Discord ID（例如 user#1234）</label>
+      <input type="text" name="discord" required />
+
+      <label>年齡</label>
+      <input type="number" name="age" required min="10" max="100" />
+
+      <label>想加入的部門</label>
+      <select name="department" required>
+        <option value="">請選擇</option>
+        <option value="軍事部">軍事部</option>
+        <option value="科技部">科技部</option>
+        <option value="外交部">外交部</option>
+        <option value="情報部">情報部</option>
+      </select>
+
+      <label>申請理由</label>
+      <textarea name="reason" rows="4" required></textarea>
+
+      <label>自我介紹</label>
+      <textarea name="intro" rows="4" required></textarea>
+
+      <button type="submit">✅ 提交申請</button>
+      <div id="response"></div>
+    </form>
+  </div>
+
+  <script>
+    const form = document.getElementById('applyForm');
+    const responseDiv = document.getElementById('response');
+
+    form.addEventListener('submit', async (e) => {
+      e.preventDefault();
+
+      const data = new FormData(form);
+      const discord = data.get('discord');
+      const age = data.get('age');
+      const department = data.get('department');
+      const reason = data.get('reason');
+      const intro = data.get('intro');
+
+      const payload = {
+        embeds: [{
+          title: '📝 新的應徵申請',
+          color: 0x38bdf8,
+          fields: [
+            { name: '🔹 Discord ID', value: discord },
+            { name: '🔹 年齡', value: age },
+            { name: '🔹 部門', value: department },
+            { name: '🔹 申請理由', value: reason },
+            { name: '🔹 自我介紹', value: intro }
+          ],
+          footer: { text: '由 Discord Apply 表單自動發送' },
+          timestamp: new Date()
+        }]
+      };
+
+      try {
+        const res = await fetch('https://discord.com/api/webhooks/1389612287928828058/PYNnAGYaD7LJ91sPFqYXDhS5-SfJIvs6dLuE8oFWueKVPuVIKOY3kCvVqTP1_iFr5F7c', {
+          method: 'POST',
+          headers: { 'Content-Type': 'application/json' },
+          body: JSON.stringify(payload)
+        });
+
+        if (res.ok) {
+          responseDiv.innerHTML = `<p class="success">✅ 已成功提交，請等待審核。</p>`;
+          form.reset();
+        } else {
+          throw new Error('Webhook 發送失敗');
+        }
+      } catch (err) {
+        responseDiv.innerHTML = `<p class="error">❌ 發送失敗，請聯絡管理員。</p>`;
+      }
+    });
+  </script>
+</body>
+</html>
