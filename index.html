@@ -1,10 +1,9 @@
-
 <!DOCTYPE html>
 <html lang="zh-TW">
 <head>
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
-  <title>Discord 應徵表單 | M.E.G</title>
+  <title>Clan Application | 加入部落申請表</title>
   <link href="https://fonts.googleapis.com/css2?family=Orbitron&display=swap" rel="stylesheet">
   <style>
     body {
@@ -13,7 +12,6 @@
       font-family: 'Orbitron', sans-serif;
       padding: 2rem;
     }
-
     .container {
       max-width: 600px;
       margin: auto;
@@ -22,18 +20,15 @@
       padding: 2rem;
       box-shadow: 0 0 20px rgba(0,0,0,0.5);
     }
-
     h2 {
       text-align: center;
       color: #38bdf8;
     }
-
     label {
       display: block;
       margin-top: 1rem;
       color: #94a3b8;
     }
-
     input, textarea, select {
       width: 100%;
       padding: 0.75rem;
@@ -44,7 +39,6 @@
       color: white;
       font-size: 1rem;
     }
-
     button {
       margin-top: 1.5rem;
       background-color: #22c55e;
@@ -56,50 +50,44 @@
       border-radius: 12px;
       cursor: pointer;
     }
-
     button:hover {
       background-color: #16a34a;
     }
-
-    .success {
-      margin-top: 1rem;
-      color: #4ade80;
-      text-align: center;
-    }
-
-    .error {
-      margin-top: 1rem;
-      color: #f87171;
-      text-align: center;
-    }
+    .success { margin-top: 1rem; color: #4ade80; text-align: center; }
+    .error { margin-top: 1rem; color: #f87171; text-align: center; }
   </style>
 </head>
 <body>
   <div class="container">
-    <h2><img src="https://i.postimg.cc/VL8LPQ7B/M-E-G.png" alt="M.E.G Logo" style="height:40px; vertical-align:middle;"> Discord 入隊申請表</h2>
+    <h2>📝 Clan Application | 加入部落申請表</h2>
+    <p>請依照以下格式填寫資料並提交，審核員將盡快處理：</p>
     <form id="applyForm">
-      <label>你的 Discord ID（例如 user#1234）</label>
+      <label>Roblox Username：<br><small>(請填寫你的 Roblox 使用者名稱)</small></label>
+      <input type="text" name="roblox" required />
+
+      <label>Discord Username：<br><small>(例如：username#1234 或 Discord ID)</small></label>
       <input type="text" name="discord" required />
 
-      <label>年齡</label>
-      <input type="number" name="age" required min="10" max="100" />
+      <label>Your Roblox Profile Link：<br><small>(貼上你的 Roblox 個人頁面網址)</small></label>
+      <input type="url" name="profile" required />
 
-      <label>想加入的部門</label>
-      <select name="department" required>
-        <option value="">請選擇</option>
-        <option value="軍事部">軍事部</option>
-        <option value="科技部">科技部</option>
-        <option value="外交部">外交部</option>
-        <option value="情報部">情報部</option>
-      </select>
+      <label>Your CBRN Rank：<br><small>(請填寫你在 CBRN 的階級)</small></label>
+      <input type="text" name="rank" required />
 
-      <label>申請理由</label>
+      <label>Why do you want to join this clan？<br><small>(簡短說明為什麼想加入部落)</small></label>
       <textarea name="reason" rows="4" required></textarea>
 
-      <label>自我介紹</label>
-      <textarea name="intro" rows="4" required></textarea>
+      <label>🛡️ Review Result：<br><small>(請選擇是否通過審核 / Approval Result)</small></label>
+      <select name="review_result" required>
+        <option value="">請選擇 / Select One</option>
+        <option value="✅ 通過 / Approved">✅ 通過 / Approved</option>
+        <option value="❌ 不通過 / Rejected">❌ 不通過 / Rejected</option>
+      </select>
 
-      <button type="submit">✅ 提交申請</button>
+      <label>📋 審核原因 / Review Reason：</label>
+      <textarea name="review_reason" rows="3" required></textarea>
+
+      <button type="submit">✅ 提交審核結果 / Submit Result</button>
       <div id="response"></div>
     </form>
   </div>
@@ -112,24 +100,28 @@
       e.preventDefault();
 
       const data = new FormData(form);
+      const roblox = data.get('roblox');
       const discord = data.get('discord');
-      const age = data.get('age');
-      const department = data.get('department');
+      const profile = data.get('profile');
+      const rank = data.get('rank');
       const reason = data.get('reason');
-      const intro = data.get('intro');
+      const review_result = data.get('review_result');
+      const review_reason = data.get('review_reason');
 
       const payload = {
         embeds: [{
-          title: '📝 新的應徵申請',
-          color: 0x38bdf8,
+          title: '📝 部落申請審核結果 / Clan Application Reviewed',
+          color: review_result.includes('✅') ? 0x22c55e : 0xf43f5e,
           fields: [
-            { name: '🔹 Discord ID', value: discord },
-            { name: '🔹 年齡', value: age },
-            { name: '🔹 部門', value: department },
-            { name: '🔹 申請理由', value: reason },
-            { name: '🔹 自我介紹', value: intro }
+            { name: '👤 Roblox Username', value: roblox },
+            { name: '💬 Discord Username', value: discord },
+            { name: '🔗 Profile Link', value: profile },
+            { name: '🎖️ CBRN Rank', value: rank },
+            { name: '🧾 Reason to Join', value: reason },
+            { name: '🛡️ 審核結果 / Review Result', value: review_result },
+            { name: '📋 審核原因 / Review Reason', value: review_reason }
           ],
-          footer: { text: '由 Discord Apply 表單自動發送' },
+          footer: { text: '由 Clan 表單自動發送 / Auto-sent via form' },
           timestamp: new Date()
         }]
       };
@@ -142,13 +134,13 @@
         });
 
         if (res.ok) {
-          responseDiv.innerHTML = `<p class="success">✅ 已成功提交，請等待審核。</p>`;
+          responseDiv.innerHTML = `<p class="success">✅ 已成功提交 / Submitted successfully.</p>`;
           form.reset();
         } else {
           throw new Error('Webhook 發送失敗');
         }
       } catch (err) {
-        responseDiv.innerHTML = `<p class="error">❌ 發送失敗，請聯絡管理員。</p>`;
+        responseDiv.innerHTML = `<p class="error">❌ 發送失敗，請聯絡管理員 / Submission failed. Please contact admin.</p>`;
       }
     });
   </script>
