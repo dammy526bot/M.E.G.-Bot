@@ -2,63 +2,69 @@
 <html lang="zh-TW">
 <head>
   <meta charset="UTF-8" />
-  <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
-  <title>Clan Application | 加入部落申請表</title>
-  <link href="https://fonts.googleapis.com/css2?family=Orbitron&display=swap" rel="stylesheet">
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
+  <title>Discord 應徵表單 | M.E.G</title>
+  <link href="https://fonts.googleapis.com/css2?family=Orbitron&display=swap" rel="stylesheet" />
   <style>
     body {
-      background-color: #0f172a;
-      color: #f8fafc;
       font-family: 'Orbitron', sans-serif;
+      background: #121212;
+      color: #ccc;
       padding: 2rem;
     }
     .container {
       max-width: 600px;
       margin: auto;
-      background: #1e293b;
-      border-radius: 16px;
+      background: #1e1e1e;
       padding: 2rem;
       box-shadow: 0 0 20px rgba(0,0,0,0.5);
+      border-radius: 10px;
     }
     h2 {
       text-align: center;
       color: #38bdf8;
+      margin-bottom: 1rem;
     }
     label {
       display: block;
       margin-top: 1rem;
       color: #94a3b8;
     }
-    input, textarea, select {
+    input, textarea {
       width: 100%;
       padding: 0.75rem;
-      border-radius: 8px;
+      margin-top: 0.3rem;
       border: none;
-      margin-top: 0.5rem;
-      background: #334155;
+      border-radius: 6px;
+      background: #333;
       color: white;
       font-size: 1rem;
     }
     button {
       margin-top: 1.5rem;
       background-color: #22c55e;
-      color: white;
-      padding: 1rem;
       border: none;
-      width: 100%;
+      padding: 0.9rem 1.2rem;
       font-size: 1rem;
+      color: white;
       border-radius: 12px;
       cursor: pointer;
+      width: 100%;
     }
     button:hover {
       background-color: #16a34a;
     }
-    .success { margin-top: 1rem; color: #4ade80; text-align: center; }
-    .error { margin-top: 1rem; color: #f87171; text-align: center; }
+    .success, .error {
+      margin-top: 1rem;
+      text-align: center;
+    }
+    .success { color: #4ade80; }
+    .error { color: #f87171; }
   </style>
 </head>
 <body>
   <div class="container">
+    <h2><img src="https://i.postimg.cc/VL8LPQ7B/M-E-G.png" alt="M.E.G Logo" style="height:40px; vertical-align:middle;"> Discord 入隊申請表</h2>
     <h2>📝 Clan Application | 加入部落申請表</h2>
     <p>請依照以下格式填寫資料並提交，審核員將盡快處理：</p>
     <form id="applyForm">
@@ -68,79 +74,69 @@
       <label>Discord Username：<br><small>(例如：username#1234 或 Discord ID)</small></label>
       <input type="text" name="discord" required />
 
+      <label>年齡</label>
+      <input type="number" name="age" required min="10" max="100" />
+
       <label>Your Roblox Profile Link：<br><small>(貼上你的 Roblox 個人頁面網址)</small></label>
       <input type="url" name="profile" required />
 
       <label>Your CBRN Rank：<br><small>(請填寫你在 CBRN 的階級)</small></label>
       <input type="text" name="rank" required />
 
-      <label>Why do you want to join this clan？<br><small>(簡短說明為什麼想加入部落)</small></label>
+      <label>申請理由 / Why do you want to join this clan？<br><small>(簡短說明為什麼想加入部落)</small></label>
       <textarea name="reason" rows="4" required></textarea>
 
-      <label>🛡️ Review Result：<br><small>(請選擇是否通過審核 / Approval Result)</small></label>
-      <select name="review_result" required>
-        <option value="">請選擇 / Select One</option>
-        <option value="✅ 通過 / Approved">✅ 通過 / Approved</option>
-        <option value="❌ 不通過 / Rejected">❌ 不通過 / Rejected</option>
-      </select>
+      <label>自我介紹</label>
+      <textarea name="intro" rows="4" required></textarea>
 
-      <label>📋 審核原因 / Review Reason：</label>
-      <textarea name="review_reason" rows="3" required></textarea>
-
-      <button type="submit">✅ 提交審核結果 / Submit Result</button>
+      <button type="submit">✅ 提交申請</button>
       <div id="response"></div>
     </form>
   </div>
 
   <script>
-    const form = document.getElementById('applyForm');
-    const responseDiv = document.getElementById('response');
+    const webhookURL = 'https://discord.com/api/webhooks/你的WebhookID/你的WebhookToken';
 
-    form.addEventListener('submit', async (e) => {
+    document.getElementById('applyForm').addEventListener('submit', async e => {
       e.preventDefault();
-
+      const form = e.target;
       const data = new FormData(form);
-      const roblox = data.get('roblox');
-      const discord = data.get('discord');
-      const profile = data.get('profile');
-      const rank = data.get('rank');
-      const reason = data.get('reason');
-      const review_result = data.get('review_result');
-      const review_reason = data.get('review_reason');
 
       const payload = {
         embeds: [{
-          title: '📝 部落申請審核結果 / Clan Application Reviewed',
-          color: review_result.includes('✅') ? 0x22c55e : 0xf43f5e,
+          title: '📝 新的部落申請 / New Clan Application',
+          color: 0x38bdf8,
           fields: [
-            { name: '👤 Roblox Username', value: roblox },
-            { name: '💬 Discord Username', value: discord },
-            { name: '🔗 Profile Link', value: profile },
-            { name: '🎖️ CBRN Rank', value: rank },
-            { name: '🧾 Reason to Join', value: reason },
-            { name: '🛡️ 審核結果 / Review Result', value: review_result },
-            { name: '📋 審核原因 / Review Reason', value: review_reason }
+            { name: '👤 Roblox Username', value: data.get('roblox') },
+            { name: '💬 Discord Username', value: data.get('discord') },
+            { name: '🎂 年齡', value: data.get('age') },
+            { name: '🔗 Roblox Profile Link', value: data.get('profile') },
+            { name: '🎖️ CBRN Rank', value: data.get('rank') },
+            { name: '🧾 申請理由 / Reason to Join', value: data.get('reason') },
+            { name: '📝 自我介紹 / Introduction', value: data.get('intro') }
           ],
-          footer: { text: '由 Clan 表單自動發送 / Auto-sent via form' },
+          footer: { text: '由 Discord Apply 表單自動發送' },
           timestamp: new Date()
         }]
       };
 
+      const responseDiv = document.getElementById('response');
+
       try {
-        const res = await fetch('https://discord.com/api/webhooks/1389612287928828058/PYNnAGYaD7LJ91sPFqYXDhS5-SfJIvs6dLuE8oFWueKVPuVIKOY3kCvVqTP1_iFr5F7c', {
+        const res = await fetch(webhookURL, {
           method: 'POST',
           headers: { 'Content-Type': 'application/json' },
-          body: JSON.stringify(payload)
+          body: JSON.stringify(payload),
         });
 
         if (res.ok) {
-          responseDiv.innerHTML = `<p class="success">✅ 已成功提交 / Submitted successfully.</p>`;
+          responseDiv.innerHTML = `<p class="success">✅ 已成功提交，請等待審核。</p>`;
           form.reset();
         } else {
           throw new Error('Webhook 發送失敗');
         }
       } catch (err) {
-        responseDiv.innerHTML = `<p class="error">❌ 發送失敗，請聯絡管理員 / Submission failed. Please contact admin.</p>`;
+        responseDiv.innerHTML = `<p class="error">❌ 發送失敗，請聯絡管理員。</p>`;
       }
     });
   </script>
